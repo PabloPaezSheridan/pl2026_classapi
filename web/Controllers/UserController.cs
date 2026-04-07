@@ -20,5 +20,12 @@ namespace web.Controllers
         {
             return Ok(_userService.GetAllUsers());
         }
+
+        [HttpDelete("{email}")]
+        public IActionResult Remove(string email)
+        {
+            _userService.Remove(email);
+            return Ok();
+        }
     }
 }

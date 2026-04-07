@@ -6,4 +6,5 @@ namespace Domain.Interfaces;
 public interface IUserRepository
 {
     List<User> GetAll();
+    void Remove(string email);
 }

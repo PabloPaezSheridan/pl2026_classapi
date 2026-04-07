@@ -19,4 +19,9 @@ public class UserService
         return _repo.GetAll();
     }
 
+    public void Remove(string email)
+    {
+        _repo.Remove(email);
+    }
+
 }

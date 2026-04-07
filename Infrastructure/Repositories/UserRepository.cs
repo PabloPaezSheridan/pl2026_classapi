@@ -1,3 +1,4 @@
+using System.Security.Cryptography.X509Certificates;
 using Domain.Entities;
 using Domain.Interfaces;
 
@@ -6,13 +7,15 @@ public class UserRepository: IUserRepository
 {
     public List<User> GetAll()
     {
-        return new List<User>()
+        return DummyUserList.Users;
+    }
+
+    public void Remove(string email)
+    {
+        User? userToRemove = DummyUserList.Users.FirstOrDefault(u => u.Email == email);
+        if (userToRemove != null)
         {
-            new() { 
-                    Id = new Guid("a3c9e2b1-4f2e-4b6a-9c2a-1b2c3d4e5f6a"),
-                    Name = "Pablo",
-                    Email = "pablo@email.com"
-                }
-        };
+            DummyUserList.Users.Remove(userToRemove);
+        }
     }
 }
