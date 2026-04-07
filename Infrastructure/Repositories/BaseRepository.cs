@@ -1,8 +1,9 @@
 using System;
+using Domain.Interfaces;
 
 namespace Infrastructure.Repositories;
 
-public abstract class BaseRepository<T> where T : class
+public abstract class BaseRepository<T>: IBaseRepository<T> where T : class
 {
     protected readonly BookChampionContext _context;
     
