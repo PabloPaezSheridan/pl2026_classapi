@@ -1,6 +1,8 @@
 using Application.Services;
 using Domain.Interfaces;
 using Infraestructure.Repositories;
+using Microsoft.EntityFrameworkCore;
+using Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +10,15 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
+
+#region DbContext Configuration
+// Configure SQL Server for local development
+var connectionString = builder.Configuration.GetConnectionString("LocalConnection");
+
+builder.Services.AddDbContext<BookChampionContext>(options =>
+    options.UseSqlServer(connectionString)
+);
+#endregion
 
 #region Injections
 builder.Services.AddScoped<UserService>();

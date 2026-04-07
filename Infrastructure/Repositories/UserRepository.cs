@@ -1,13 +1,14 @@
 using System.Security.Cryptography.X509Certificates;
 using Domain.Entities;
 using Domain.Interfaces;
+using Infrastructure;
+using Infrastructure.Repositories;
 
 namespace Infraestructure.Repositories;
-public class UserRepository: IUserRepository
+public class UserRepository: BaseRepository<User> , IUserRepository
 {
-    public List<User> GetAll()
+    public UserRepository(BookChampionContext context) : base(context)
     {
-        return DummyUserList.Users;
     }
 
     public void Remove(string email)
@@ -15,7 +16,7 @@ public class UserRepository: IUserRepository
         User? userToRemove = DummyUserList.Users.FirstOrDefault(u => u.Email == email);
         if (userToRemove != null)
         {
-            DummyUserList.Users.Remove(userToRemove);
+            _context.Users.Remove(userToRemove);
         }
     }
 }
