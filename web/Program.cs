@@ -3,6 +3,7 @@ using Domain.Interfaces;
 using Infraestructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Infrastructure;
+using Infrastructure.ExternalServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +24,9 @@ builder.Services.AddDbContext<BookChampionContext>(options =>
 #region Injections
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ITheOneAPIHandler, TheOneAPIHandler>();
+builder.Services.AddScoped<TheOneAPIService>();
+
 #endregion
 
 var app = builder.Build();
