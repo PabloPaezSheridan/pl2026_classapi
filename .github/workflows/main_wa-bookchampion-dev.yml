@@ -8,6 +8,15 @@ on:
     branches:
       - main
   workflow_dispatch:
+    inputs:
+      environment:
+        description: Deployment environment
+        type: choice
+        required: true
+        default: dev
+        options:
+          - dev
+          - prod
 
 jobs:
   build:
@@ -38,6 +47,7 @@ jobs:
   deploy:
     runs-on: windows-latest
     needs: build
+    environment: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment || 'dev' }}
     permissions:
       id-token: write #This is required for requesting the JWT
       contents: read #This is required for actions/checkout
@@ -51,9 +61,15 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_D336D2B9AF7548259C6D28E4BE9A190A }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_668B0F4F276F4DCF975CF85217A4AB99 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_CE5AD8B082EB4E398BBC4FCB6DEEB894 }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Install dotnet-ef tool
+        run: dotnet tool install --global dotnet-ef --version 10.*
+          
+      - name: Update database with EF Core migrations
+        run: dotnet ef database update --project PL2026_CLASSAPI/Infrastructure/Infrastructure.csproj --startup-project PL2026_CLASSAPI/Web/Web.csproj
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
