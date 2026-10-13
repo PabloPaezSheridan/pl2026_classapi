@@ -79,8 +79,31 @@ jobs:
       - name: Restore NuGet packages
         run: dotnet restore web/web.csproj
 
+      - name: Allow runner IP on SQL server firewall
+        shell: bash
+        run: |
+          RUNNER_IP=$(curl -s https://api.ipify.org)
+          echo "RUNNER_IP=$RUNNER_IP" >> "$GITHUB_ENV"
+          az sql server firewall-rule create \
+            --resource-group "${{ secrets.AZURE_SQL_RESOURCE_GROUP }}" \
+            --server "${{ secrets.AZURE_SQL_SERVER_NAME }}" \
+            --name "github-runner-${{ github.run_id }}" \
+            --start-ip-address "$RUNNER_IP" \
+            --end-ip-address "$RUNNER_IP"
+
       - name: Update database with EF Core migrations
         run: dotnet ef database update --project Infrastructure/Infrastructure.csproj --startup-project web/web.csproj
+        env:
+          ConnectionStrings__LocalConnection: ${{ secrets.AZURE_SQL_CONNECTION_STRING }}
+
+      - name: Remove runner IP from SQL server firewall
+        if: always()
+        shell: bash
+        run: |
+          az sql server firewall-rule delete \
+            --resource-group "${{ secrets.AZURE_SQL_RESOURCE_GROUP }}" \
+            --server "${{ secrets.AZURE_SQL_SERVER_NAME }}" \
+            --name "github-runner-${{ github.run_id }}" || true
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
