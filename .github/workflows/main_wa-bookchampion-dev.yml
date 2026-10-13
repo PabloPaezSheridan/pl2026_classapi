@@ -98,7 +98,7 @@ jobs:
         run: |
           $builder = New-Object System.Data.SqlClient.SqlConnectionStringBuilder($env:SQL_CONNECTION_STRING)
           $builder["Connect Timeout"] = 60
-          $maxAttempts = 10
+          $maxAttempts = 3
           for ($i = 1; $i -le $maxAttempts; $i++) {
             try {
               $conn = New-Object System.Data.SqlClient.SqlConnection($builder.ConnectionString)
