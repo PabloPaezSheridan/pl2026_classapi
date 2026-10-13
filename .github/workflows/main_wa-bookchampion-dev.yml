@@ -73,8 +73,8 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Install dotnet-ef tool
-        run: dotnet tool install --global dotnet-ef --version 10.*
+      - name: Restore dotnet-ef tool
+        run: dotnet tool restore
           
       - name: Update database with EF Core migrations
         run: dotnet ef database update --project Infrastructure/Infrastructure.csproj --startup-project web/web.csproj
