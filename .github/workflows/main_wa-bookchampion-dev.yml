@@ -75,7 +75,10 @@ jobs:
 
       - name: Restore dotnet-ef tool
         run: dotnet tool restore
-          
+
+      - name: Restore NuGet packages
+        run: dotnet restore web/web.csproj
+
       - name: Update database with EF Core migrations
         run: dotnet ef database update --project Infrastructure/Infrastructure.csproj --startup-project web/web.csproj
 
